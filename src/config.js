@@ -1,12 +1,7 @@
-//const config = {
-    //WEBSOCKET_URL:
-
-       // 'https://simple-video-app-maovares.azurewebsites.net'
-//};
-
-//export default config;
 const config = {
-    // URL anterior (producción): 'https'://simple-video-app-maovares.azurewebsites.net'
-    WEBSOCKET_URL: 'ws://localhost:8000' // Usa 'ws' y el puerto 8000
+    WEBSOCKET_URL:
+        // URL anterior: 'https://simple-video-app-maovares.azurewebsites.net'
+        'wss://tu-servidor-webrtc-xyz.azurewebsites.net' // ¡Esta es tu nueva URL!
 };
+
 export default config;
