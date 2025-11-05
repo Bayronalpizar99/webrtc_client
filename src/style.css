@@ -1,0 +1,58 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 20px;
+}
+
+#videoGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+video {
+    width: 100%;
+    border-radius: 8px;
+    background-color: #333;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+#controls {
+    text-align: center;
+    margin: 20px 0;
+}
+
+#controls button {
+    font-size: 16px;
+    padding: 10px 20px;
+    border-radius: 20px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+#controls button:hover {
+    background-color: #0056b3;
+}
+
+#participantsArea {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 15px;
+    background-color: #fff;
+    border-radius: 8px;
+}
+
+#participantsArea h3 {
+    margin-top: 0;
+}
+
+#participantList li {
+    padding: 5px 0;
+    border-bottom: 1px solid #eee;
+}
