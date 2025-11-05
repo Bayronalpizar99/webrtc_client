@@ -8,7 +8,7 @@ import config from './config.js';
 import { PeerConnectionManager } from './PeerConnectionManager.js';
 import { WebSocketManager } from './WebSocketManager.js';
 import { WebRTCManager } from './WebRTCManager.js';
-import { UIManager } from './UIManager.js';
+import { UIManager } from './UIManager.js'; // Asegúrate que este import existe
 
 /**
  * Clase principal que orquesta toda la aplicación de videoconferencia.
@@ -69,48 +69,59 @@ export class VideoConferenceApp {
             console.log('Evento recibido: assign-id', message);
             this.rtcManager.setMyUserId(message.userId);
             console.log(`ID de usuario asignado: ${message.userId}`);
+
+            // <-- NUEVO: Añadirnos a la lista de participantes de la UI
+            UIManager.addParticipantToList(message.userId, true);
         });
 
         // Evento: Un nuevo usuario se ha unido a la sala.
         this.wsManager.onMessage('user-joined', (message) => {
             console.log('Procesando evento: user-joined', message);
+            
+            // <-- NUEVO: Añadir al nuevo usuario a la lista de la UI
+            UIManager.addParticipantToList(message.userId);
+
             this.rtcManager.handleUserJoined(message.userId);
         });
 
         // Evento: Al entrar, el servidor nos envía una lista de los usuarios que ya estaban en la sala.
         this.wsManager.onMessage('existing-users', (message) => {
             console.log('Procesando evento: existing-users', message);
-            message.userIds.forEach(userId => this.rtcManager.handleUserJoined(userId));
+            message.userIds.forEach(userId => {
+                
+                // <-- NUEVO: Añadir cada usuario existente a la lista de la UI
+                UIManager.addParticipantToList(userId);
+
+                this.rtcManager.handleUserJoined(userId);
+            });
         });
 
         // Evento: Un usuario ha abandonado la sala.
         this.wsManager.onMessage('user-left', (message) => {
             console.log('Procesando evento: user-left', message);
+
+            // <-- NUEVO: Quitar al usuario de la lista de la UI
+            UIManager.removeParticipantFromList(message.userId);
+
             this.rtcManager.handleUserLeft(message.userId);
         });
 
         // Evento: Recibimos una "oferta" de otro par para iniciar una conexión WebRTC.
-        // Una 'offer' es un mensaje (con formato SDP) que describe cómo un par quiere comunicarse
-        // (qué codecs de audio/video soporta, etc.). Es el primer paso para establecer una conexión.
+        // ... (resto del manejador sin cambios)
         this.wsManager.onMessage('offer', (message) => {
             console.log('Procesando evento: offer (oferta)', message);
             this.rtcManager.handleOffer(message.fromUserId, message.offer);
         });
 
         // Evento: Recibimos una "respuesta" a una oferta que enviamos previamente.
-        // Una 'answer' es la respuesta a una 'offer'. El par que la recibe confirma los parámetros
-        // de comunicación y envía su propia descripción de sesión (SDP). Con la oferta y la respuesta,
-        // ambos pares saben cómo comunicarse.
+        // ... (resto del manejador sin cambios)
         this.wsManager.onMessage('answer', (message) => {
             console.log('Procesando evento: answer (respuesta)', message);
             this.rtcManager.handleAnswer(message.fromUserId, message.answer);
         });
 
         // Evento: Recibimos un "candidato ICE".
-        // ICE (Interactive Connectivity Establishment) es el protocolo que usa WebRTC para encontrar
-        // la mejor ruta de conexión posible entre dos pares, incluso si están detrás de firewalls o NAT.
-        // Un 'candidato ICE' es una dirección de red (IP y puerto) que podría usarse para la conexión.
-        // Los pares intercambian múltiples candidatos y eligen el que funcione.
+        // ... (resto del manejador sin cambios)
         this.wsManager.onMessage('ice-candidate', (message) => {
             console.log('Procesando evento: ice-candidate (candidato ICE)', message);
             this.rtcManager.handleIceCandidate(message.fromUserId, message.candidate);
